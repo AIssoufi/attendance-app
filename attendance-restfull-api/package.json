@@ -1,0 +1,28 @@
+{
+  "name": "attendance-restfull-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "start:dev": "nodemon index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Issoufi ADAM <issoufi.adam1@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.3",
+    "connect-mongo": "^2.0.3",
+    "dotenv": "^6.1.0",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "mongodb": "^3.0.1",
+    "mongoose": "^5.4.5",
+    "multer": "^1.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0"
+  }
+}
