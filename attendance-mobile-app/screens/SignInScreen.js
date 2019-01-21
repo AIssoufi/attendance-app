@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import Styled from 'styled-components/native';
+import { Alert } from 'react-native';
 
 // Components
 import { Input, Text, Label, Button } from '../components';
+
+// Service
+import AuthService from '../services/AuthService';
 
 class SignInScreen extends Component {
   static navigationOptions = {
@@ -19,16 +23,26 @@ class SignInScreen extends Component {
   }
 
   handleSubmit = () => {
-    console.log("username : ", this.state.username);
-    console.log("password : ", this.state.password);
-    console.log("confirmPassword : ", this.state.confirmPassword);
+    const { username, password, confirmPassword } = this.state;
 
-    if (!this.state.username) { return; }
-    if (!this.state.password) { return; }
-    if (!this.state.confirmPassword) { return; }
+    if (!username) { return; }
+    if (!password) { return; }
+    if (!confirmPassword) { return; }
 
-    if (this.state.password === this.state.confirmPassword) {
-      this.props.navigation.navigate('LogIn')
+    if (password === confirmPassword) {
+      AuthService.signin({ username, password })
+        .then(user => {
+          this.props.navigation.navigate('Main');
+        }).catch(message => {
+          Alert.alert(
+            'Oups !',
+            message,
+            [
+              { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ],
+            { cancelable: false }
+          );
+        });
     }
   }
 

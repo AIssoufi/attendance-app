@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import Styled from 'styled-components/native';
+import { Alert } from 'react-native';
 
 // Components
 import { Input, Text, Label, Button } from '../components';
+
+// Service
+import AuthService from '../services/AuthService';
 
 class LogInScreen extends Component {
   static navigationOptions = {
@@ -38,6 +42,23 @@ class LogInScreen extends Component {
     return (username.length !== 0) && (password.length !== 0);
   }
 
+  handleLogin = () => {
+    const { username, password } = this.state;
+    AuthService.login({ username, password })
+      .then(user => {
+        this.props.navigation.navigate('Main')
+      }).catch(message => {
+        Alert.alert(
+          'Oups !',
+          message,
+          [
+            { text: 'OK', onPress: () => console.log('OK Pressed') },
+          ],
+          { cancelable: false }
+        );
+      })
+  }
+
   render() {
     return (
       <LogInContainer>
@@ -59,10 +80,10 @@ class LogInScreen extends Component {
             />
           </Input.Row>
           <Button
-            onPress={() => this.props.navigation.navigate('Main')}
+            onPress={this.handleLogin}
             disabled={!this.state.fieldsAreValid}
             size={Button.LARGE}>
-            <Text color="white">Se connecter</Text>
+            <Text color="white" >Se connecter</Text>
           </Button>
         </MainContainer>
         <FooterContainer>
