@@ -1,10 +1,19 @@
 // Dependencies
 import React from 'react';
+import { connect } from 'react-redux';
+
+// Actions
+import { getAttendance } from '../redux/actions/attendance.action';
 
 // Component
 import CostumEventList from '../components/CostumEventList';
+import Loader from '../components/Loader';
 
-export default class schedulesScreen extends React.Component {
+// Utils
+import { convertEventToGroupedLessons } from '../utils/converters/calendar';
+
+
+class schedulesScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: navigation.getParam('custumTitle', 'Mes retards')
   });
@@ -257,13 +266,15 @@ export default class schedulesScreen extends React.Component {
     }
   }
   componentDidMount() {
-    this.updateTitle()
+    this.props.getAttendance().then(data => {
+      this.updateTitle();
+    });
   }
 
   updateTitle = () => {
-    const result = this.state.schedules.reduce((total, curentItem) => {
-      return total + curentItem.schedules.length;
-    }, 0);
+    if (this.props.isFetching) return;
+
+    const result = this.props.delays.length;
 
     this.props.navigation.setParams({
       custumTitle: `Vous avez ${result} ${result > 1 ? 'retards' : 'aucun retard'}`
@@ -271,6 +282,21 @@ export default class schedulesScreen extends React.Component {
   }
 
   render() {
-    return <CostumEventList events={this.state.schedules} />;
+    if (this.props.isFetching) return <Loader />;
+
+    return <CostumEventList events={convertEventToGroupedLessons({ data: this.props.delays })} />;
   }
 }
+
+const mapDispatchToProps = {
+  getAttendance
+};
+
+function mapStateToProps(state) {
+  return {
+    delays: state.attendance.delays,
+    isFetching: state.attendance.isFetching,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(schedulesScreen);

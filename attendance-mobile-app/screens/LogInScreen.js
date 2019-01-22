@@ -1,12 +1,13 @@
+// Dependencies
 import React, { Component } from 'react';
 import Styled from 'styled-components/native';
-import { Alert } from 'react-native';
+import { connect } from 'react-redux';
+
+// Actions
+import { login } from '../redux/actions/auth.action';
 
 // Components
 import { Input, Text, Label, Button } from '../components';
-
-// Service
-import AuthService from '../services/AuthService';
 
 class LogInScreen extends Component {
   static navigationOptions = {
@@ -44,31 +45,26 @@ class LogInScreen extends Component {
 
   handleLogin = () => {
     const { username, password } = this.state;
-    AuthService.login({ username, password })
-      .then(user => {
-        this.props.navigation.navigate('Main')
-      }).catch(message => {
-        Alert.alert(
-          'Oups !',
-          message,
-          [
-            { text: 'OK', onPress: () => console.log('OK Pressed') },
-          ],
-          { cancelable: false }
-        );
-      })
+
+    this.props.login({ username, password }).then(user => {
+      this.props.navigation.navigate('Main')
+    }).catch(error => {
+      // Do nothing
+    })
   }
 
   render() {
     return (
       <LogInContainer>
-        <HeaderContainer></HeaderContainer>
+        <HeaderContainer>
+        </HeaderContainer>
         <MainContainer>
           <Input.Row>
             <Label>Identifiant</Label>
             <Input
               placeholder="nom.prenom@etu.unice.fr"
               onChangeText={newText => this.handleInputChange('username', newText)}
+              value={this.state.username}
             />
           </Input.Row>
           <Input.Row>
@@ -77,6 +73,7 @@ class LogInScreen extends Component {
               secureTextEntry
               placeholder="Password"
               onChangeText={newText => this.handleInputChange('password', newText)}
+              value={this.state.password}
             />
           </Input.Row>
           <Button
@@ -87,7 +84,7 @@ class LogInScreen extends Component {
           </Button>
         </MainContainer>
         <FooterContainer>
-          <Text>Vous êtes nouveau sur Attendence App ? </Text>
+          <Text>Vous êtes nouveau sur Attendance App ? </Text>
           <Text
             color="blue"
             onPress={() => this.props.navigation.navigate('SignIn')}
@@ -98,7 +95,11 @@ class LogInScreen extends Component {
   }
 }
 
-export default LogInScreen;
+const mapDispatchToProps = {
+  login
+};
+
+export default connect(null, mapDispatchToProps)(LogInScreen);
 
 const LogInContainer = Styled.View`
   flex: 1;
@@ -123,3 +124,4 @@ const FooterContainer = Styled.View`
   justify-content: center;
   padding: 40px 40px;
 `;
+

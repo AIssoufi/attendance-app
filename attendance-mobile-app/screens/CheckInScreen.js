@@ -3,38 +3,40 @@ import React from 'react';
 import Styled from 'styled-components/native';
 import { ScrollView } from 'react-native';
 import { Icon } from 'expo';
+import { connect } from 'react-redux';
+
+// Actions
+import { getCalendar } from '../redux/actions/calendar.action';
 
 // Component
-import { EventList } from '../components'
+import { EventList, Loader } from '../components';
 
-export default class CheckInScreen extends React.Component {
+// Utils
+import { converEventToLessons } from '../utils/converters/calendar';
+
+class CheckInScreen extends React.Component {
   static navigationOptions = {
     title: 'Accueil',
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      schedules: [
-        {
-          times: {
-            start: '08:00',
-            end: '09:30'
-          },
-          title: 'UE4 Data sciences et analyse',
-          details: 'Salle MBDS aux lucioles',
-          status: 'Actuellement'
-        },
-        {
-          times: {
-            start: '09:30',
-            end: '11:00'
-          },
-          title: 'UE4 Data sciences et analyse',
-          details: 'Salle MBDS aux lucioles',
-          status: 'Prochainnement'
-        }
-      ]
+  componentDidMount() {
+    this.props.getCalendar();
+  }
+
+  getStatus = (dstart, dend) => {
+    const _dstart = new Date(dstart);
+    const _now = new Date()
+
+    const start = _dstart.getTime();
+    const end = new Date(dend).getTime();
+    const now = _now.getTime();
+
+    if (now >= start && now <= end) {
+      return "Actuellement";
+    } else if (now < start && (_dstart.getHours() - _now.getHours() <= 2)) {
+      return "Prochainnement"; // Dans moins de heure heure
+    } else {
+      return null;
     }
   }
 
@@ -42,8 +44,16 @@ export default class CheckInScreen extends React.Component {
     return (
       <ScrollView>
         <CeckInContainer>
-          <Title>Mes prochains cours</Title>
-          <EventList schedules={this.state.schedules} onPressItem={(e) => console.log(e)} />
+          <Title>Mes prochains cours</Title>{
+            this.props.todayIsFetching ?
+              <Loader /> :
+              <EDTContainer ref={ref => this.scrollView = ref}
+                onContentSizeChange={(contentWidth, contentHeight) => {
+                  this.scrollView.scrollToEnd({ animated: true });
+                }}>
+                <EventList schedules={converEventToLessons({ data: this.props.today, statusFunc: this.getStatus })} onPressItem={(e) => console.log(e)} />
+              </EDTContainer>
+          }
           <Title>Pointage de présence</Title>
           <MainContainer>
             <Alert>Vous pouvez pointer votre présence 15 minutes avant le début du cours</Alert>
@@ -58,6 +68,20 @@ export default class CheckInScreen extends React.Component {
     );
   }
 }
+
+const mapDispatchToProps = {
+  getCalendar
+};
+
+function mapStateToProps(state) {
+  return {
+    today: state.calendar.today,
+    todayIsFetching: state.calendar.isFetching,
+    currentUser: state.auth.currentUser
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CheckInScreen)
 
 const CeckInContainer = Styled.View`
   flex: 1;
@@ -132,3 +156,7 @@ const Text = Styled.Text`
   font-size:14px;
   font-weight: bold;
 `;
+
+const EDTContainer = Styled.ScrollView`
+max-height: 150px;
+`

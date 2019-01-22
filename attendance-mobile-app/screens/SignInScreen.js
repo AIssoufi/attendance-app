@@ -1,12 +1,13 @@
+// Dependencies
 import React, { Component } from 'react';
 import Styled from 'styled-components/native';
-import { Alert } from 'react-native';
+import { connect } from 'react-redux';
+
+// Actions
+import { signin } from '../redux/actions/auth.action';
 
 // Components
 import { Input, Text, Label, Button } from '../components';
-
-// Service
-import AuthService from '../services/AuthService';
 
 class SignInScreen extends Component {
   static navigationOptions = {
@@ -30,18 +31,12 @@ class SignInScreen extends Component {
     if (!confirmPassword) { return; }
 
     if (password === confirmPassword) {
-      AuthService.signin({ username, password })
+
+      this.props.signin({ username, password })
         .then(user => {
           this.props.navigation.navigate('Main');
         }).catch(message => {
-          Alert.alert(
-            'Oups !',
-            message,
-            [
-              { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ],
-            { cancelable: false }
-          );
+          // do nothing
         });
     }
   }
@@ -109,7 +104,11 @@ class SignInScreen extends Component {
   }
 }
 
-export default SignInScreen;
+const mapDispatchToProps = {
+  signin
+};
+
+export default connect(null, mapDispatchToProps)(SignInScreen);
 
 const SignInContainer = Styled.View`
   flex: 1;

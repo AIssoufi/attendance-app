@@ -1,10 +1,18 @@
 // Dependencies
 import React from 'react';
+import { connect } from 'react-redux';
+
+// Actions
+import { getAttendance } from '../redux/actions/attendance.action';
 
 // Component
 import CostumEventList from '../components/CostumEventList';
+import Loader from '../components/Loader';
 
-export default class AbsencesScreen extends React.Component {
+// Utils
+import { convertEventToGroupedLessons } from '../utils/converters/calendar';
+
+class AbsencesScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: navigation.getParam('custumTitle', 'Mes retards')
   });
@@ -165,21 +173,38 @@ export default class AbsencesScreen extends React.Component {
       ]
     }
   }
+
   componentDidMount() {
-    this.updateTitle()
+    this.props.getAttendance().then(data => {
+      this.updateTitle();
+    });
   }
 
   updateTitle = () => {
-    const result = this.state.schedules.reduce((total, curentItem) => {
-      return total + curentItem.schedules.length;
-    }, 0);
+    if (this.props.isFetching) return;
 
+    const result = this.props.absences.length;
     this.props.navigation.setParams({
-      custumTitle: `Vous avez ${result} ${result > 1 ? 'absences' : 'aucune absence'}`
+      custumTitle: `Vous avez ${result > 1 ? `${result} absences` : 'aucune absence'}`
     });
   }
 
   render() {
-    return <CostumEventList events={this.state.schedules} />;
+    if (this.props.isFetching) return <Loader />;
+
+    return <CostumEventList events={convertEventToGroupedLessons({ data: this.props.absences })} />;
   }
 }
+
+const mapDispatchToProps = {
+  getAttendance
+};
+
+function mapStateToProps(state) {
+  return {
+    absences: state.attendance.absences,
+    isFetching: state.attendance.isFetching,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AbsencesScreen);
