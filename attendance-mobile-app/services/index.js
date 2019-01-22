@@ -1,5 +1,9 @@
+import AttendanceService from './AttendanceService';
 import AuthService from './AuthService';
+import CalendarService from './CalendarService';
 
 export {
-  AuthService
+  AttendanceService,
+  AuthService,
+  CalendarService
 }

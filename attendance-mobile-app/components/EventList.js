@@ -14,8 +14,8 @@ const EventList = ({ schedules = [], onPressItem = f => f }) => (
       >
         <View style={{ flexDirection: 'row', alignItems: 'stretch' }}>
           <TimesContainer>
-            <Time start>{schedule.times.start}</Time>
-            <Time>{schedule.times.end}</Time>
+            <Time start>{getTime(schedule.times.start)}</Time>
+            <Time>{getTime(schedule.times.end)}</Time>
           </TimesContainer>
           <Infos>
             <TiteContainer>
@@ -73,9 +73,9 @@ const Infos = Styled.View`
   padding: 9px 0;
 `
 
-const TitleInfos = ({ children: text, ...rest }) => (
+const TitleInfos = ({ children: text, fill = false, ...rest }) => (
   <TitleInfosStyled {...rest}>
-    {typeof (text) === 'string' && text.length > 23 ? text.substring(0, 20) + '...' : text}
+    {typeof (text) === 'string' && text.length > 28 && !fill ? text.substring(0, 25) + '...' : text}
   </TitleInfosStyled>
 );
 
@@ -103,3 +103,8 @@ const TiteContainer = Styled.View`
   flex-wrap: wrap;
   justifyContent: space-between;
 `
+
+getTime = dateIsoFormat => {
+  const date = new Date(dateIsoFormat);
+  return `${date.getHours()}:${date.getMinutes()}`;
+}
