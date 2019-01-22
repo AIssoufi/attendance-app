@@ -5,8 +5,7 @@ import mongoose from 'mongoose';
 import session from 'express-session';
 import expressSession from 'connect-mongo';
 
-import AuthRoute from './routes/auth.route';
-import TestRoute from './routes/test.route';
+import { AuthRoute, CalendarRoute, AttendanceRoute } from './routes';
 
 const MongoStore = expressSession(session);
 const app = express();
@@ -37,8 +36,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // include routes
-app.use('/test', TestRoute);
+app.use('/attendance', AttendanceRoute);
 app.use('/auth', AuthRoute);
+app.use('/calendar', CalendarRoute);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

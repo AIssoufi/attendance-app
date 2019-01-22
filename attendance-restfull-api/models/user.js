@@ -11,6 +11,16 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  school: {
+    start: {
+      type: String,
+      default: `${new Date().getFullYear() - 1}-09-09T00:00:00Z`,
+    },
+    end: {
+      type: String,
+      default: `${new Date().getFullYear()}-07-01T00:00:00Z`,
+    }
   }
 });
 
