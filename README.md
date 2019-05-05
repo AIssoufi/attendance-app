@@ -1,5 +1,8 @@
 # Attendance App
 
+![Demo Animation](https://gitlab.com/issoufi/attendance-app/raw/assets/Attendance%20App%20-%20connexion%20screen.png?inline=false)
+![Demo Animation](https://gitlab.com/issoufi/attendance-app/raw/assets/Attendance%20App%20-%20register%20screen.png?inline=false)
+
 ## Description
 Conception et réalisation d'une application mobile de contrôle de présence dans
 le cadre d’un projet universitaire en master 2. Le pointage des présences est
