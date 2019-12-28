@@ -11,7 +11,7 @@
   "author": "Issoufi ADAM <issoufi.adam1@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "bcrypt": "^3.0.3",
     "connect-mongo": "^2.0.3",
     "dotenv": "^6.1.0",
